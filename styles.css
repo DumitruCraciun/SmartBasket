@@ -242,9 +242,11 @@ tr:nth-child(even) {
 .swipe-row {
     position: relative;
     overflow: hidden;
+    display: table-row; /* Ensure it behaves as a table row */
 }
 
 .swipe-content {
+    display: contents;
     transition: transform 0.2s ease;
 }
 
@@ -262,6 +264,7 @@ tr:nth-child(even) {
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
+    z-index: 5;     /* Ensure the delete button is above the content */
 }
 
 /* ---------- Desktop (opțional) ---------- */

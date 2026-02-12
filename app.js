@@ -151,137 +151,123 @@ function renderTable(data) {
     });
    
     // ----------- ROWS -----------
-    data.forEach(row => {
-        const tr = table.insertRow();
-        tr.classList.add("swipe-row"); 
+data.forEach(row => {
+    const tr = table.insertRow();
+    tr.classList.add("swipe-row");
+    tr.style.position = "relative"; // Important for swipe
 
-        // ----------------- Item -----------------
-        const tdItem = document.createElement("td");
-        tdItem.innerText = row.itemName;
-        tdItem.style.border = "1px solid #ccc";
-        tdItem.style.padding = "5px";      
-         
-        // ----------------- Hightlight Prices -----------------
-        const prices = allStores.map(s => row.prices[s]).filter(v => v > 0);
-        const minPrice = prices.length ? Math.min(...prices) : null;        
-        const inputs = {};      // Prices: input numeric pentru fiecare magazin
+    // Create the swipe-content div but DON'T put td's inside it
+    const swipeContent = document.createElement("div");
+    swipeContent.className = "swipe-content";
+    swipeContent.style.display = "contents"; // This makes it act like it's not there
+    tr.appendChild(swipeContent);
 
-        // AICI cod nou
-        const swipeContent = document.createElement("div");
-        swipeContent.className = "swipe-content";
-        swipeContent.style.display = "flex";
-        swipeContent.style.flex = "1";
-        swipeContent.style.alignItems = "center";
+    // ----------------- Item -----------------
+    const tdItem = document.createElement("td");
+    tdItem.innerText = row.itemName;
+    tdItem.style.border = "1px solid #ccc";
+    tdItem.style.padding = "5px";
+    swipeContent.appendChild(tdItem); // Now it's okay because display:contents
 
-        swipeContent.appendChild(tdItem);
+    // ----------------- Prices -----------------
+    const prices = allStores.map(s => row.prices[s]).filter(v => v > 0);
+    const minPrice = prices.length ? Math.min(...prices) : null;
+    const inputs = {};
 
-        // AICI cod existent
-        allStores.forEach(store => {
-            //const td = tr.insertCell();
-            const td = document.createElement("td");
-            td.style.border = "1px solid #ccc";
-            td.style.padding = "5px";
+    allStores.forEach(store => {
+        const td = document.createElement("td");
+        td.style.border = "1px solid #ccc";
+        td.style.padding = "5px";
 
-            const input = document.createElement("input");
-            input.type = "text";
-            input.inputMode = "decimal"; // pentru tastaturi mobile   
-            input.classList.add("price-input");       
-            input.value = row.prices[store] ?? 0;
-            input.style.width = "60px";
-            input.style.textAlign = "center";
+        const input = document.createElement("input");
+        input.type = "text";
+        input.inputMode = "decimal";
+        input.classList.add("price-input");
+        input.value = row.prices[store] ?? 0;
+        input.style.width = "60px";
+        input.style.textAlign = "center";
 
-            // Adauga clasa 'cheapest' pretului cel mai mic
-            const priceValue = row.prices[store] ?? 0;
-            if (minPrice !== null && priceValue === minPrice) {
-                td.classList.add("cheapest");
-            }
+        const priceValue = row.prices[store] ?? 0;
+        if (minPrice !== null && priceValue === minPrice) {
+            td.classList.add("cheapest");
+        }
 
-            td.appendChild(input);
-            inputs[store] = input; // salvăm input pentru Save
-            swipeContent.appendChild(td);
-        });
-
-        // Unit (dropdown)
-        //const tdUnit = tr.insertCell();
-        const tdUnit = document.createElement("td");
-        const select = document.createElement("select");
-        ["kg", "item"].forEach(u => {
-            const option = document.createElement("option");
-            option.value = u;
-            option.innerText = u;
-            if (row.unit === u) option.selected = true;
-            select.appendChild(option);
-        });
-        tdUnit.appendChild(select);
-        tdUnit.style.border = "1px solid #ccc";
-        tdUnit.style.padding = "5px";        
-        swipeContent.appendChild(tdUnit);
-
-        select.addEventListener("change", async () => {
-            row.unit = select.value;
-            await updateItemUnit(row.itemId, select.value);
-        });
-
-        // Actions: Save + Delete icon
-        //const tdActions = tr.insertCell();
-        const tdActions = document.createElement("td");
-        tdActions.style.border = "1px solid #ccc";
-        tdActions.style.padding = "5px";
-
-        // Save rand
-        const saveBtn = document.createElement("button");
-        saveBtn.innerText = "💾 Save";   
-        saveBtn.classList.add("btn-save");     
-        saveBtn.style.marginRight = "5px";
-
-        saveBtn.addEventListener("click", async () => {            
-            for (const store of allStores) {
-                const val = parseFloat(inputs[store].value);
-                if (isNaN(val) || val < 0) {
-                    alert(`Price for ${store} must be 0 or positive`);
-                    inputs[store].value = row.prices[store] ?? 0;
-                    return;
-                }
-
-                const storeId = await getStoreIdByName(store);
-                await updatePrice(row.itemId, storeId, val);
-                row.prices[store] = val;
-            }
-
-            // Feedback vizual simplu pentru Button Save            
-            saveBtn.disabled = true;
-            saveBtn.innerText = "✔ Saved";
-
-            setTimeout(() => {
-                saveBtn.disabled = false;
-                saveBtn.innerText = "💾 Save";
-                renderTable(priceMatrix);       // recalculam pret min + highlight
-            }, 1000);
-
-        });
-        tdActions.appendChild(saveBtn);
-
-        swipeContent.appendChild(tdActions);
-
-        tr.appendChild(swipeContent);
-
-        // Swipe Delete
-        const swipeDelete = document.createElement("div");
-        swipeDelete.className = "swipe-delete";
-        swipeDelete.innerText = "🗑️";
-        tr.appendChild(swipeDelete);
-
-        enableSwipe(tr, async () => {
-            showConfirm(`Delete item "${row.itemName}"?`, async () => {
-                await deleteItem(row.itemId);
-                priceMatrix = priceMatrix.filter(r => r.itemId !== row.itemId);
-                renderTable(priceMatrix);
-            });
-        });
-        
-        //tdActions.appendChild(delBtn);
-        table.appendChild(tr);
+        td.appendChild(input);
+        inputs[store] = input;
+        swipeContent.appendChild(td);
     });
+
+    // ----------------- Unit -----------------
+    const tdUnit = document.createElement("td");
+    const select = document.createElement("select");
+    ["kg", "item"].forEach(u => {
+        const option = document.createElement("option");
+        option.value = u;
+        option.innerText = u;
+        if (row.unit === u) option.selected = true;
+        select.appendChild(option);
+    });
+    tdUnit.appendChild(select);
+    tdUnit.style.border = "1px solid #ccc";
+    tdUnit.style.padding = "5px";
+    swipeContent.appendChild(tdUnit);
+
+    select.addEventListener("change", async () => {
+        row.unit = select.value;
+        await updateItemUnit(row.itemId, select.value);
+    });
+
+    // ----------------- Actions -----------------
+    const tdActions = document.createElement("td");
+    tdActions.style.border = "1px solid #ccc";
+    tdActions.style.padding = "5px";
+
+    const saveBtn = document.createElement("button");
+    saveBtn.innerText = "💾 Save";
+    saveBtn.classList.add("btn-save");
+    saveBtn.style.marginRight = "5px";
+
+    saveBtn.addEventListener("click", async () => {
+        for (const store of allStores) {
+            const val = parseFloat(inputs[store].value);
+            if (isNaN(val) || val < 0) {
+                alert(`Price for ${store} must be 0 or positive`);
+                inputs[store].value = row.prices[store] ?? 0;
+                return;
+            }
+
+            const storeId = await getStoreIdByName(store);
+            await updatePrice(row.itemId, storeId, val);
+            row.prices[store] = val;
+        }
+
+        saveBtn.disabled = true;
+        saveBtn.innerText = "✔ Saved";
+
+        setTimeout(() => {
+            saveBtn.disabled = false;
+            saveBtn.innerText = "💾 Save";
+            renderTable(priceMatrix);
+        }, 1000);
+    });
+    
+    tdActions.appendChild(saveBtn);
+    swipeContent.appendChild(tdActions);
+
+    // Swipe Delete
+    const swipeDelete = document.createElement("div");
+    swipeDelete.className = "swipe-delete";
+    swipeDelete.innerText = "🗑️";
+    tr.appendChild(swipeDelete);
+
+    enableSwipe(tr, async () => {
+        showConfirm(`Delete item "${row.itemName}"?`, async () => {
+            await deleteItem(row.itemId);
+            priceMatrix = priceMatrix.filter(r => r.itemId !== row.itemId);
+            renderTable(priceMatrix);
+        });
+    });
+});
 
     tableContainer.appendChild(table);
 }
