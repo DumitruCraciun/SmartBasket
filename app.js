@@ -276,6 +276,7 @@ data.forEach(row => {
 function enableSwipe(tr, onDelete) {
     let startX = 0;
     let currentX = 0;
+    let isSwiped = false;
 
     const swipeContent = tr.querySelector(".swipe-content");
     const swipeDelete = tr.querySelector(".swipe-delete");
@@ -284,26 +285,38 @@ function enableSwipe(tr, onDelete) {
 
     tr.addEventListener("touchstart", e => {
         startX = e.touches[0].clientX;
+        tr.classList.remove("swiped"); // Elimină swipe-ul anterior
     });
 
     tr.addEventListener("touchmove", e => {
         currentX = e.touches[0].clientX;
         const diff = currentX - startX;
 
-        if (diff < 0 && diff > -80) {
-            swipeContent.style.transform = `translateX(${diff}px)`;
+        if (diff < 0 && diff > -60) {
+            swipeDelete.style.right = `${-60 - diff}px`;
         }
     });
 
     tr.addEventListener("touchend", () => {
-        if (startX - currentX > 50) {
-            swipeContent.style.transform = "translateX(-60px)";
+        const diff = currentX - startX;
+        
+        if (diff < -30) {
+            tr.classList.add("swiped");
+            swipeDelete.style.right = "0";
+            isSwiped = true;
         } else {
-            swipeContent.style.transform = "translateX(0)";
+            tr.classList.remove("swiped");
+            swipeDelete.style.right = "-60px";
+            isSwiped = false;
         }
     });
 
-    swipeDelete.onclick = onDelete;
+    swipeDelete.onclick = (e) => {
+        e.stopPropagation();
+        onDelete();
+        tr.classList.remove("swiped");
+        swipeDelete.style.right = "-60px";
+    };
 }
 
 // ------------------- Search filter -------------------

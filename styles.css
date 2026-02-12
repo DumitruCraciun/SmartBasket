@@ -28,83 +28,118 @@ h1 {
     margin-bottom: 12px;
 }
 
-/* ---------- Container tabel (scroll pe mobil) ---------- */
+/* ---------- Container tabel ---------- */
 #prices-container {
     overflow-x: auto;
     background: #fff;
-    border-radius: 2px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    border-radius: 8px;
+    border: 1px solid #ddd;
 }
 
 /* ---------- Tabel ---------- */
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px; /* permite scroll horizontal */
-    /*table-layout: fixed; /* celule de dimensiuni egale, pentru aliniere mai bună */
+    min-width: 600px;
+    border: 1px solid #ddd;
 }
 
 th, td {
-    padding: 8px;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 6px 4px;
+    border: 1px solid #ddd;
     text-align: left;
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     overflow: hidden;
+    vertical-align: middle;
 }
 
+/* Coloana Item */
 th:first-child, td:first-child {
     position: sticky;
     left: 0;
-    background: #fff;
+    background: #e77777;
     z-index: 2;
+    width: 70px;
+    min-width: 70px;
+    max-width: 70px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid #ccc;
 }
 
-th {
-    background: #f0f0f0;
-    font-weight: 600;
-    position: sticky;
-    top: 0;
-    z-index: 2;
+/* Coloanele magazinelor */
+th:not(:first-child):not(:last-child):not(:nth-last-child(2)),
+td:not(:first-child):not(:last-child):not(:nth-last-child(2)) {
+    width: 70px;
+    min-width: 70px;
+    max-width: 70px;
+}
+
+/* Coloana Unit */
+th:nth-last-child(2),
+td:nth-last-child(2) {
+    width: 55px;
+    min-width: 55px;
     text-align: center;
 }
 
-/* ---------- Input preț ---------- */
-td input[type="number"] {
-    width: 70px;
-    padding: 6px;
-    font-size: 0.9rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;    
+/* Coloana Actions */
+th:last-child,
+td:last-child {
+    width: 65px;
+    min-width: 65px;
+    text-align: center;
+    border-right: 1px solid #ddd;
 }
 
-/* Clasa pentru input-urile de preț, pentru stilizare suplimentară */
+th {
+    background: #f5f5f5;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    text-align: center;
+    border-bottom: 2px solid #ccc;
+}
+
+/* ---------- Input preț ---------- */
 .price-input {
     display: block;
     margin: 0 auto;
     text-align: center;
-    width: 70px; /* opțional, arată mai bine */
-    border-radius: 6px;
+    width: 45px !important;
+    padding: 4px 2px !important;
+    border-radius: 4px;
     border: 1px solid #ccc;
+    font-size: 0.75rem !important;
+    height: 28px;
 }
 
 /* ---------- Select unit ---------- */
 td select {
-    padding: 6px;
-    font-size: 0.75rem;
-    border-radius: 6px;
+    padding: 4px 2px;
+    font-size: 0.7rem;
+    border-radius: 4px;
     border: 1px solid #ccc;
+    width: 48px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
 }
 
 /* ---------- Butoane ---------- */
 button {
-    padding: 6px 10px;
-    font-size: 0.85rem;
-    border-radius: 6px;
+    padding: 4px 6px;
+    font-size: 0.75rem;
+    border-radius: 4px;
     border: none;
     cursor: pointer;
 }
 
-/* Container pentru butoane (Add Stem + Add Store) */
+/* Container butoane */
 .action-bar {
     display: flex;
     justify-content: space-between;
@@ -120,66 +155,64 @@ button {
     font-size: 12px;
     font-weight: 600;
     border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 #add-store-btn {
-    background: #4CAF50; /* verde */
+    background: #4CAF50;
     color: white;
 }
 
 #add-item-btn {
-    background: #2196F3; /* albastru */
+    background: #2196F3;
     color: white;
 }
 
-.action-bar button:active {
-    transform: scale(0.97);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2) inset;
-}
-
-/* Save */
+/* ---------- Save button ---------- */
 .btn-save {
     background: #2ecc71;
     color: white;
-    margin-left: 6px;
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    white-space: nowrap;
 }
 
-/* Delete (store) */
+/* ---------- Delete store button (MIC) ---------- */
 .btn-delete-store {
-    width: 18px;
-    height: 18px;
-
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    padding: 0;            /* 🔴 obligatoriu */
-    font-size: 0.6rem;
+    padding: 0 !important;
+    font-size: 0.55rem !important;
     line-height: 1;
-
-    background: rgb(241, 124, 124);
+    background: rgba(241, 124, 124, 0.7);
     color: #4b120c;
-    border-radius: 4px;
+    border-radius: 3px;
     border: none;
+    opacity: 0.7;
 }
 
-.btn-delete-store:active {
-    transform: scale(0.9);
+.btn-delete-store:hover {
+    opacity: 1;
 }
 
-/* ---------- Header store (nume + delete) ---------- */
+/* ---------- Header store ---------- */
 .store-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 4px;
+    gap: 2px;
+    padding: 2px;
 }
 
 .store-header span {
     white-space: nowrap;
+    font-size: 0.7rem;
+    max-width: 45px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* ---------- Rânduri ---------- */
@@ -189,13 +222,45 @@ tr:nth-child(even) {
 
 /* ---------- Evidentiaza cel mai mic pret ---------- */
 .cheapest {
-    background-color: #1c8035;
-    border: 2px solid #053a1b;
+    background-color: #1c8035 !important;
+    border: 2px solid #4CAF50 !important;
     font-weight: 600;
 }
 
+/* ---------- SWIPE LEFT ---------- */
+.swipe-row {
+    position: relative;
+    overflow: visible;
+    display: table-row;
+}
 
-/* ---------- Responsive (mobil for Delete row) ---------- */
+.swipe-content {
+    display: contents;
+    transition: transform 0.2s ease;
+}
+
+.swipe-delete {
+    position: absolute;
+    right: -60px; /* ASCUNS complet - vizibil doar la swipe */
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    background: #e74c3c;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    z-index: 10;
+    transition: right 0.2s ease;
+}
+
+/* La swipe, butonul devine vizibil */
+.swipe-row.swiped .swipe-delete {
+    right: 0;
+}
+
+/* ---------- Modal ---------- */
 .modal {
     position: fixed;
     inset: 0;
@@ -230,7 +295,6 @@ tr:nth-child(even) {
     margin: 0 4px;
     padding: 10px;
     border-radius: 8px;
-    border: none;
 }
 
 .modal-actions .danger {
@@ -238,36 +302,7 @@ tr:nth-child(even) {
     color: #fff;
 }
 
-/* ---------- SWIPE LEFT PE RAND ---------- */
-.swipe-row {
-    position: relative;
-    overflow: hidden;
-    display: table-row; /* Ensure it behaves as a table row */
-}
-
-.swipe-content {
-    display: contents;
-    transition: transform 0.2s ease;
-}
-
-.swipe-delete {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-
-    width: 60px;
-    background: #e74c3c;
-    color: white;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    z-index: 5;     /* Ensure the delete button is above the content */
-}
-
-/* ---------- Desktop (opțional) ---------- */
+/* ---------- Desktop ---------- */
 @media (min-width: 768px) {
     body {
         max-width: 1100px;
@@ -276,5 +311,13 @@ tr:nth-child(even) {
 
     h1 {
         font-size: 1.8rem;
+    }
+    
+    .btn-delete-store {
+        opacity: 0.4;
+    }
+    
+    .btn-delete-store:hover {
+        opacity: 1;
     }
 }
