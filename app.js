@@ -95,44 +95,38 @@ function renderTable(data) {
 
     // --- Item header ---
     let th = document.createElement("th");
-    th.innerText = "Item";
-    th.style.border = "1px solid #ccc";
-    th.style.padding = "5px";
+    th.innerText = "Produs";
+    th.style.border = "1px solid #ddd";
+    th.style.padding = "8px 4px";
     header.appendChild(th);
     
     // --- Store headers ---
     allStores.forEach(store => {
         th = document.createElement("th");
-        th.style.border = "1px solid #ccc";
-        th.style.padding = "5px";
+        th.style.border = "1px solid #ddd";
+        th.style.padding = "8px 4px";
         th.style.textAlign = "left";        
 
-        // container pentru nume + delete
         const div = document.createElement("div");
         div.classList.add("store-header");
-        div.style.display = "flex";
-        div.style.alignItems = "center";
-        div.style.justifyContent = "space-between";
 
         const span = document.createElement("span");
         span.innerText = store;
 
         const delBtn = document.createElement("button");
-        delBtn.innerText = "✖"; // icon simplu     
+        delBtn.innerText = "✕";     
         delBtn.classList.add("btn-delete-store");  
-        delBtn.title = `Delete store ${store}`;
-        delBtn.style.marginLeft = "5px";
+        delBtn.title = `Șterge magazinul ${store}`;
 
-        delBtn.addEventListener("click", async () => {
-            if (!confirm(`Are you sure you want to delete store "${store}"?`)) return;
-
-            const storeId = await getStoreIdByName(store);
-            await deleteStore(storeId);
-
-            // update array allStores și re-render tabel
-            allStores = allStores.filter(s => s !== store);
-            priceMatrix.forEach(row => delete row.prices[store]); // eliminăm coloana în date
-            renderTable(priceMatrix);
+        delBtn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            showConfirm(`Sigur ștergi magazinul "${store}"?`, async () => {
+                const storeId = await getStoreIdByName(store);
+                await deleteStore(storeId);
+                allStores = allStores.filter(s => s !== store);
+                priceMatrix.forEach(row => delete row.prices[store]);
+                renderTable(priceMatrix);
+            });
         });
 
         div.appendChild(span);
@@ -141,133 +135,200 @@ function renderTable(data) {
         header.appendChild(th);
     });
 
-    // Ultimele coloane fixe: Unit + Actions
-    ["Unit", "Actions"].forEach(text => {
+    // Ultimele coloane: Unit și Save (pentru mobile)    
+    ["Unit", "Save"].forEach(text => {
         th = document.createElement("th");
         th.innerText = text;
-        th.style.border = "1px solid #ccc";
-        th.style.padding = "5px";
+        th.style.border = "1px solid #ddd";
+        th.style.padding = "8px 4px";
         header.appendChild(th);
     });
    
-    // ----------- ROWS -----------
-data.forEach(row => {
-    const tr = table.insertRow();
-    tr.classList.add("swipe-row");
-    tr.style.position = "relative"; // Important for swipe
+    // ----------- Rânduri cu produse -----------
+    data.forEach(row => {
+        const tr = table.insertRow();
+        
+        // Calcul preț minim
+        const prices = allStores.map(s => row.prices[s]).filter(v => v > 0);
+        const minPrice = prices.length ? Math.min(...prices) : null;        
+        const inputs = {};
 
-    // Create the swipe-content div but DON'T put td's inside it
-    const swipeContent = document.createElement("div");
-    swipeContent.className = "swipe-content";
-    swipeContent.style.display = "contents"; // This makes it act like it's not there
-    tr.appendChild(swipeContent);
+        // ----------------- Coloana Produs -----------------
+        const tdItem = document.createElement("td");
+        tdItem.style.border = "1px solid #ddd";
+        tdItem.style.padding = "8px 4px";
+        
+        const itemDiv = document.createElement("div");
+        itemDiv.classList.add("item-header");
+        
+        const itemSpan = document.createElement("span");
+        itemSpan.innerText = row.itemName;
+        
+        const deleteItemBtn = document.createElement("button");
+        deleteItemBtn.innerText = "✕";
+        deleteItemBtn.classList.add("btn-delete-item");
+        deleteItemBtn.title = `Șterge produsul ${row.itemName}`;
+        
+        deleteItemBtn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            showConfirm(`Ștergi produsul "${row.itemName}"?`, async () => {
+                await deleteItem(row.itemId);
+                priceMatrix = priceMatrix.filter(r => r.itemId !== row.itemId);
+                renderTable(priceMatrix);
+            });
+        });
+        
+        itemDiv.appendChild(itemSpan);
+        itemDiv.appendChild(deleteItemBtn);
+        tdItem.appendChild(itemDiv);
+        tr.appendChild(tdItem);
 
-    // ----------------- Item -----------------
-    const tdItem = document.createElement("td");
-    tdItem.innerText = row.itemName;
-    tdItem.style.border = "1px solid #ccc";
-    tdItem.style.padding = "5px";
-    swipeContent.appendChild(tdItem); // Now it's okay because display:contents
+        // ----------------- Coloane prețuri magazine -----------------
+        allStores.forEach(store => {
+            const td = document.createElement("td");
+            td.style.border = "1px solid #ddd";
+            td.style.padding = "8px 4px";
 
-    // ----------------- Prices -----------------
-    const prices = allStores.map(s => row.prices[s]).filter(v => v > 0);
-    const minPrice = prices.length ? Math.min(...prices) : null;
-    const inputs = {};
-
-    allStores.forEach(store => {
-        const td = document.createElement("td");
-        td.style.border = "1px solid #ccc";
-        td.style.padding = "5px";
-
-        const input = document.createElement("input");
-        input.type = "text";
-        input.inputMode = "decimal";
-        input.classList.add("price-input");
-        input.value = row.prices[store] ?? 0;
-        input.style.width = "60px";
-        input.style.textAlign = "center";
-
-        const priceValue = row.prices[store] ?? 0;
-        if (minPrice !== null && priceValue === minPrice) {
-            td.classList.add("cheapest");
-        }
-
-        td.appendChild(input);
-        inputs[store] = input;
-        swipeContent.appendChild(td);
-    });
-
-    // ----------------- Unit -----------------
-    const tdUnit = document.createElement("td");
-    const select = document.createElement("select");
-    ["kg", "item"].forEach(u => {
-        const option = document.createElement("option");
-        option.value = u;
-        option.innerText = u;
-        if (row.unit === u) option.selected = true;
-        select.appendChild(option);
-    });
-    tdUnit.appendChild(select);
-    tdUnit.style.border = "1px solid #ccc";
-    tdUnit.style.padding = "5px";
-    swipeContent.appendChild(tdUnit);
-
-    select.addEventListener("change", async () => {
-        row.unit = select.value;
-        await updateItemUnit(row.itemId, select.value);
-    });
-
-    // ----------------- Actions -----------------
-    const tdActions = document.createElement("td");
-    tdActions.style.border = "1px solid #ccc";
-    tdActions.style.padding = "5px";
-
-    const saveBtn = document.createElement("button");
-    saveBtn.innerText = "💾 Save";
-    saveBtn.classList.add("btn-save");
-    saveBtn.style.marginRight = "5px";
-
-    saveBtn.addEventListener("click", async () => {
-        for (const store of allStores) {
-            const val = parseFloat(inputs[store].value);
-            if (isNaN(val) || val < 0) {
-                alert(`Price for ${store} must be 0 or positive`);
-                inputs[store].value = row.prices[store] ?? 0;
-                return;
+            const input = document.createElement("input");
+            input.type = "text";
+            input.inputMode = "decimal";
+            input.classList.add("price-input");
+            input.value = row.prices[store] ?? 0;
+            
+            // Evidențiere preț minim
+            const priceValue = row.prices[store] ?? 0;
+            if (minPrice !== null && priceValue === minPrice) {
+                td.classList.add("cheapest");
             }
 
-            const storeId = await getStoreIdByName(store);
-            await updatePrice(row.itemId, storeId, val);
-            row.prices[store] = val;
-        }
-
-        saveBtn.disabled = true;
-        saveBtn.innerText = "✔ Saved";
-
-        setTimeout(() => {
-            saveBtn.disabled = false;
-            saveBtn.innerText = "💾 Save";
-            renderTable(priceMatrix);
-        }, 1000);
-    });
-    
-    tdActions.appendChild(saveBtn);
-    swipeContent.appendChild(tdActions);
-
-    // Swipe Delete
-    const swipeDelete = document.createElement("div");
-    swipeDelete.className = "swipe-delete";
-    swipeDelete.innerText = "🗑️";
-    tr.appendChild(swipeDelete);
-
-    enableSwipe(tr, async () => {
-        showConfirm(`Delete item "${row.itemName}"?`, async () => {
-            await deleteItem(row.itemId);
-            priceMatrix = priceMatrix.filter(r => r.itemId !== row.itemId);
-            renderTable(priceMatrix);
+            td.appendChild(input);
+            inputs[store] = input;
+            tr.appendChild(td);
         });
+
+        // ----------------- Coloana Unitate -----------------
+        const tdUnit = document.createElement("td");
+        tdUnit.style.border = "1px solid #ddd";
+        tdUnit.style.padding = "8px 4px";
+        tdUnit.style.textAlign = "center";
+        
+        const select = document.createElement("select");
+
+        // Array de unități cu mapare pentru baza de date
+        const displayUnit = ["kg", "buc"];
+
+        displayUnit.forEach(u => {
+            const option = document.createElement("option");
+            option.value = u; // Valoarea din select va fi "kg" sau "buc"
+            option.innerText = u;
+            
+            // row.unit vine din baza de date: "kg" sau "item"
+            // Trebuie să convertim row.unit în valoarea de afișat
+            let dbToDisplay = row.unit;
+            if (row.unit === "item") {
+                dbToDisplay = "buc";
+            }
+            
+            // Setează selected dacă se potrivesc
+            if (dbToDisplay === u) {
+                option.selected = true;
+            }
+            
+            select.appendChild(option);
+        });
+        
+        //select.addEventListener("change", async () => {
+        //    row.unit = select.value;
+        //    await updateItemUnit(row.itemId, select.value);
+        //});
+        
+        tdUnit.appendChild(select);
+        tr.appendChild(tdUnit);
+
+// ----------------- Coloana Salvare -----------------
+        const tdSave = document.createElement("td");
+        tdSave.style.border = "1px solid #ddd";
+        tdSave.style.padding = "8px 4px";
+        tdSave.style.textAlign = "center";
+        
+        const saveBtn = document.createElement("button");
+        saveBtn.innerText = "💾 Save";   
+        saveBtn.classList.add("btn-save");     
+        saveBtn.style.marginRight = "0";
+        saveBtn.style.padding = "6px 10px";
+        saveBtn.style.fontSize = "0.7rem";
+        saveBtn.style.whiteSpace = "nowrap";
+        saveBtn.style.width = "100%";
+        saveBtn.style.maxWidth = "60px";
+
+        saveBtn.addEventListener("click", async () => {
+            
+            // Salvează unitatea
+            let selectedUnit = select.value; // "kg" sau "buc"
+            
+            // Convertește "buc" în "item" pentru baza de date
+            if (selectedUnit === "buc") {
+                selectedUnit = "item";
+            }
+            if (row.unit !== selectedUnit) {
+                console.log("Încerc să salvez unitatea:", { itemId: row.itemId, selectedUnit });
+                
+                // Salvează în baza de date
+                const { data, error } = await supabase
+                    .from("items")
+                    .update({ unit: selectedUnit })
+                    .eq("id", Number(row.itemId))
+                    .select();
+                    
+                if (error) {
+                    console.error("Eroare detaliată la salvarea unității:", error);
+                    console.log("Detalii eroare:", {
+                        message: error.message,
+                        details: error.details,
+                        hint: error.hint,
+                        code: error.code
+                    });
+                    alert(`Eroare la salvarea unității: ${error.message}`);
+                    return;
+                }
+                
+                console.log("Unitate salvată cu succes:", data);
+                
+                // Actualizează și în priceMatrix
+                row.unit = selectedUnit;
+            }
+            
+            // Salvează prețurile
+            for (const store of allStores) {
+                const val = parseFloat(inputs[store].value);
+                if (isNaN(val) || val < 0) {
+                    alert(`Prețul pentru ${store} trebuie să fie 0 sau mai mare`);
+                    inputs[store].value = row.prices[store] ?? 0;
+                    return;
+                }
+
+                const storeId = await getStoreIdByName(store);
+                await updatePrice(row.itemId, storeId, val);
+                row.prices[store] = val;
+            }
+
+            // Feedback vizual pentru butonul Save
+            saveBtn.disabled = true;
+            saveBtn.innerText = "✓ Salvat";
+            saveBtn.style.background = "#27ae60";
+
+            setTimeout(() => {
+                saveBtn.disabled = false;
+                saveBtn.innerText = "💾 Save";
+                saveBtn.style.background = "#2ecc71";
+                // Re-render cu datele actualizate
+                renderTable(priceMatrix);
+            }, 1000);
+        });
+        
+        tdSave.appendChild(saveBtn);
+        tr.appendChild(tdSave);
     });
-});
 
     tableContainer.appendChild(table);
 }
@@ -450,19 +511,6 @@ async function updatePrice(itemId, storeId, amount) {
 
     if (error) {
         console.error("Error updating price:", error);
-    }
-}
-
-// ------------------- Update unit -------------------
-async function updateItemUnit(itemId, unit) {
-
-    const { error } = await supabase
-        .from("items")
-        .update({ unit: unit })
-        .eq("id", Number(itemId));
-
-    if (error) {
-        console.error("Error updating unit:", error);
     }
 }
 

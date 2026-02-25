@@ -45,11 +45,11 @@ table {
 }
 
 th, td {
-    padding: 6px 4px;
+    padding: 8px 4px;
     border: 1px solid #ddd;
     text-align: left;
     font-size: 0.75rem;
-    overflow: hidden;
+    /*overflow: hidden;*/
     vertical-align: middle;
 }
 
@@ -59,12 +59,12 @@ th:first-child, td:first-child {
     left: 0;
     background: #e77777;
     z-index: 2;
-    width: 70px;
-    min-width: 70px;
-    max-width: 70px;
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /*overflow: hidden;
+    text-overflow: ellipsis;*/
     border-right: 1px solid #ccc;
 }
 
@@ -87,8 +87,8 @@ td:nth-last-child(2) {
 /* Coloana Actions */
 th:last-child,
 td:last-child {
-    width: 65px;
-    min-width: 65px;
+    width: 50px;
+    min-width: 50px;
     text-align: center;
     border-right: 1px solid #ddd;
 }
@@ -122,7 +122,7 @@ td select {
     font-size: 0.7rem;
     border-radius: 4px;
     border: 1px solid #ccc;
-    width: 48px;
+    width: 50px;
     height: 28px;
     display: flex;
     align-items: center;
@@ -167,13 +167,52 @@ button {
     color: white;
 }
 
-/* ---------- Save button ---------- */
+/* ---------- Buton Save ---------- */
 .btn-save {
     background: #2ecc71;
     color: white;
-    padding: 4px 8px;
+    padding: 6px 10px;
     font-size: 0.7rem;
     white-space: nowrap;
+    width: 100%;
+    max-width: 60px;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-save:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-save:active {
+    transform: scale(0.95);
+}
+
+/* ---------- Buton Delete Item (MIC) ---------- */
+.btn-delete-item {
+    width: 14px !important;
+    height: 14px !important;
+    min-width: 14px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    font-size: 0.5rem !important;
+    line-height: 1;
+    background: #e74c3c;
+    color: white;
+    border-radius: 3px;
+    border: none;
+    margin-left: 2px;
+    transition: background 0.2s ease;
+    flex-shrink: 0;
+}
+
+.btn-delete-item:active {
+    transform: scale(0.9);
 }
 
 /* ---------- Delete store button (MIC) ---------- */
@@ -181,11 +220,11 @@ button {
     width: 16px !important;
     height: 16px !important;
     min-width: 16px !important;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0 !important;
-    font-size: 0.55rem !important;
+    font-size: 0.6rem !important;
     line-height: 1;
     background: rgba(241, 124, 124, 0.7);
     color: #4b120c;
@@ -215,6 +254,25 @@ button {
     text-overflow: ellipsis;
 }
 
+/* ---------- Item header pentru coloana Item ---------- */
+.item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    width: 100%;
+    padding-right: 2px;
+}
+
+.item-header span {
+    white-space: nowrap;
+    font-size: 0.75rem;
+    max-width: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
 /* ---------- Rânduri ---------- */
 tr:nth-child(even) {
     background: #fafafa;
@@ -227,38 +285,6 @@ tr:nth-child(even) {
     font-weight: 600;
 }
 
-/* ---------- SWIPE LEFT ---------- */
-.swipe-row {
-    position: relative;
-    overflow: visible;
-    display: table-row;
-}
-
-.swipe-content {
-    display: contents;
-    transition: transform 0.2s ease;
-}
-
-.swipe-delete {
-    position: absolute;
-    right: -60px; /* ASCUNS complet - vizibil doar la swipe */
-    top: 0;
-    bottom: 0;
-    width: 60px;
-    background: #e74c3c;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    z-index: 10;
-    transition: right 0.2s ease;
-}
-
-/* La swipe, butonul devine vizibil */
-.swipe-row.swiped .swipe-delete {
-    right: 0;
-}
 
 /* ---------- Modal ---------- */
 .modal {
