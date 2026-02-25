@@ -48,24 +48,26 @@ th, td {
     padding: 8px 4px;
     border: 1px solid #ddd;
     text-align: left;
-    font-size: 0.75rem;
-    /*overflow: hidden;*/
+    font-size: 0.8rem;    
     vertical-align: middle;
 }
+
 
 /* Coloana Item */
 th:first-child, td:first-child {
     position: sticky;
     left: 0;
-    background: #e77777;
-    z-index: 2;
+    background: #87967a;
     width: 80px;
     min-width: 80px;
     max-width: 80px;
     white-space: nowrap;
-    /*overflow: hidden;
-    text-overflow: ellipsis;*/
-    border-right: 1px solid #ccc;
+    border-right: 1px solid #ccc;    
+}
+
+td:first-child {
+    font-size: 0.95rem;
+    font-weight: 600;
 }
 
 /* Coloanele magazinelor */
@@ -98,7 +100,7 @@ th {
     font-weight: 600;
     position: sticky;
     top: 0;
-    z-index: 3;
+    z-index: 2;
     text-align: center;
     border-bottom: 2px solid #ccc;
 }
@@ -217,20 +219,22 @@ button {
 
 /* ---------- Delete store button (MIC) ---------- */
 .btn-delete-store {
-    width: 16px !important;
-    height: 16px !important;
-    min-width: 16px !important;
-    display: inline-flex;
+    width: 14px !important;
+    height: 14px !important;
+    min-width: 14px !important;
+    display: flex;
     align-items: center;
     justify-content: center;
     padding: 0 !important;
-    font-size: 0.6rem !important;
+    font-size: 0.5rem !important;
+    font-weight: 600;
     line-height: 1;
     background: rgba(241, 124, 124, 0.7);
     color: #4b120c;
     border-radius: 3px;
     border: none;
-    opacity: 0.7;
+    opacity: 0.8;
+    flex-shrink: 0;
 }
 
 .btn-delete-store:hover {
@@ -244,12 +248,13 @@ button {
     justify-content: space-between;
     gap: 2px;
     padding: 2px;
+    width: 100%;
 }
 
 .store-header span {
     white-space: nowrap;
     font-size: 0.7rem;
-    max-width: 45px;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
 }

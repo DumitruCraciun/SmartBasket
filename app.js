@@ -98,6 +98,7 @@ function renderTable(data) {
     th.innerText = "Produs";
     th.style.border = "1px solid #ddd";
     th.style.padding = "8px 4px";
+    th.style.zIndex = "3";
     header.appendChild(th);
     
     // --- Store headers ---
@@ -105,7 +106,7 @@ function renderTable(data) {
         th = document.createElement("th");
         th.style.border = "1px solid #ddd";
         th.style.padding = "8px 4px";
-        th.style.textAlign = "left";        
+        th.style.textAlign = "left";               
 
         const div = document.createElement("div");
         div.classList.add("store-header");
