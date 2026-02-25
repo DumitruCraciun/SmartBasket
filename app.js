@@ -236,13 +236,8 @@ function renderTable(data) {
             }
             
             select.appendChild(option);
-        });
-        
-        //select.addEventListener("change", async () => {
-        //    row.unit = select.value;
-        //    await updateItemUnit(row.itemId, select.value);
-        //});
-        
+        });    
+
         tdUnit.appendChild(select);
         tr.appendChild(tdUnit);
 

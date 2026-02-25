@@ -58,9 +58,9 @@ th:first-child, td:first-child {
     position: sticky;
     left: 0;
     background: #87967a;
-    width: 80px;
-    min-width: 80px;
-    max-width: 80px;
+    width: 65px;
+    min-width: 65px;
+    max-width: 65px;
     white-space: nowrap;
     border-right: 1px solid #ccc;    
 }
@@ -73,24 +73,26 @@ td:first-child {
 /* Coloanele magazinelor */
 th:not(:first-child):not(:last-child):not(:nth-last-child(2)),
 td:not(:first-child):not(:last-child):not(:nth-last-child(2)) {
-    width: 70px;
-    min-width: 70px;
-    max-width: 70px;
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
 }
 
 /* Coloana Unit */
 th:nth-last-child(2),
 td:nth-last-child(2) {
-    width: 55px;
-    min-width: 55px;
+    width: 35px;
+    min-width: 35px;
+    max-width: 35px;
     text-align: center;
 }
 
-/* Coloana Actions */
+/* Coloana Save */
 th:last-child,
 td:last-child {
-    width: 50px;
-    min-width: 50px;
+    width: 35px;
+    min-width: 35px;
+    max-width: 35px;
     text-align: center;
     border-right: 1px solid #ddd;
 }
