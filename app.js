@@ -158,7 +158,7 @@ function renderTable(data) {
         const tdItem = document.createElement("td");
         tdItem.style.border = "1px solid #ddd";
         tdItem.style.padding = "4px 2px 4px 4px";
-        tdItem.style.position = "relative";
+        tdItem.style.position = "sticky";
         
         const itemDiv = document.createElement("div");
         itemDiv.classList.add("item-header");

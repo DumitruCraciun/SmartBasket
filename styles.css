@@ -32,9 +32,11 @@ h1 {
 /* ---------- Container tabel ---------- */
 #prices-container {
     overflow-x: auto;
+    overflow-y: visible;
     background: #fff;
     border-radius: 8px;
     border: 1px solid #ddd;
+    position: relative;
 }
 
 /* ---------- Tabel ---------- */
@@ -43,6 +45,7 @@ table {
     border-collapse: collapse;
     min-width: 600px;
     border: 1px solid #ddd;
+    position: relative;
 }
 
 th, td {
@@ -58,18 +61,18 @@ th, td {
 th:first-child, td:first-child {
     position: sticky;
     left: 0;
-    width: auto;
     background: #87967a;
     width: 65px;
     min-width: 65px;
     max-width: 65px;
     white-space: nowrap;
-    border-right: 1px solid #ccc;    
+    border-right: 1px solid #ccc; 
+    z-index: 10;      
 }
 
 td:first-child {
     font-size: 0.95rem;
-    font-weight: 600;
+    font-weight: 600; 
 }
 
 /* Coloanele magazinelor */
