@@ -6,6 +6,7 @@
 body {
     margin: 0;
     padding: 10px;
+    padding-bottom: 60px; /* Pentru a nu acoperi conținutul de footer */;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background: #f7f7f7;
     color: #222;
@@ -57,6 +58,7 @@ th, td {
 th:first-child, td:first-child {
     position: sticky;
     left: 0;
+    width: auto;
     background: #87967a;
     width: 65px;
     min-width: 65px;
@@ -210,9 +212,8 @@ button {
     color: white;
     border-radius: 3px;
     border: none;
-    margin-left: 2px;
-    transition: background 0.2s ease;
     flex-shrink: 0;
+    margin-left: 2px;;
 }
 
 .btn-delete-item:active {
@@ -268,16 +269,19 @@ button {
     justify-content: space-between;
     gap: 4px;
     width: 100%;
-    padding-right: 2px;
+    height: 100%;
+    padding: 2px 4px;
 }
 
 .item-header span {
     white-space: nowrap;
-    font-size: 0.75rem;
-    max-width: 50px;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex: 1;
+    font-size: 0.9rem;
+    font-weight: 600;
+    flex: 1;     
+    min-width: 10px;
+    text-align: left;
 }
 
 /* ---------- Rânduri ---------- */
@@ -353,4 +357,25 @@ tr:nth-child(even) {
     .btn-delete-store:hover {
         opacity: 1;
     }
+}
+
+/* ---------- Footer fixat în partea de jos ---------- */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #2c3e50;
+    color: #ecf0f1;
+    text-align: center;
+    padding: 12px;
+    font-size: 0.75rem;
+    z-index: 999;
+    border-top: 2px solid #3498db;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+}
+
+footer p {
+    margin: 0;
+    letter-spacing: 0.5px;
 }

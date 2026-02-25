@@ -157,18 +157,33 @@ function renderTable(data) {
         // ----------------- Coloana Produs -----------------
         const tdItem = document.createElement("td");
         tdItem.style.border = "1px solid #ddd";
-        tdItem.style.padding = "8px 4px";
+        tdItem.style.padding = "4px 2px 4px 4px";
+        tdItem.style.position = "relative";
         
         const itemDiv = document.createElement("div");
         itemDiv.classList.add("item-header");
+        itemDiv.style.display = "flex";
+        itemDiv.style.alignItems = "center";
+        itemDiv.style.justifyContent = "space-between";
+        itemDiv.style.width = "100%";
+        itemDiv.style.gap = "4px";
         
         const itemSpan = document.createElement("span");
         itemSpan.innerText = row.itemName;
+        itemSpan.style.flex = "1";
+        itemSpan.style.minWidth = "0";
+        itemSpan.style.overflow = "hidden";
+        itemSpan.style.textOverflow = "ellipsis";
+        itemSpan.style.whiteSpace = "nowrap";
+        itemSpan.style.textAlign = "left";
+        itemSpan.style.fontSize = "0.9rem";
+        itemSpan.style.fontWeight = "600";
         
         const deleteItemBtn = document.createElement("button");
         deleteItemBtn.innerText = "✕";
         deleteItemBtn.classList.add("btn-delete-item");
         deleteItemBtn.title = `Șterge produsul ${row.itemName}`;
+        deleteItemBtn.style.flexShrink = "0";
         
         deleteItemBtn.addEventListener("click", async (e) => {
             e.stopPropagation();
@@ -195,9 +210,13 @@ function renderTable(data) {
             input.inputMode = "decimal";
             input.classList.add("price-input");
             input.value = row.prices[store] ?? 0;
-            
+
             // Evidențiere preț minim
             const priceValue = row.prices[store] ?? 0;
+            if (priceValue !== 0){
+                input.value = Number(priceValue).toFixed(2);
+            }
+
             if (minPrice !== null && priceValue === minPrice) {
                 td.classList.add("cheapest");
             }
@@ -567,3 +586,53 @@ async function getStoreIdByName(name) {
 
 // ------------------- Initial load -------------------
 loadPriceMatrix();
+
+
+// ---------- Footer dinamic - configurabil ----------
+const APP_CONFIG = {
+    major: 1,
+    minor: 0,
+    patch: 0,
+    releaseDate: new Date(2026, 1, 25), // 25 Februarie 2026
+    name: "SmartBasket"
+};
+
+function formatElapsedTime(now, releaseDate) {
+    let years = now.getFullYear() - releaseDate.getFullYear();
+    let months = now.getMonth() - releaseDate.getMonth();
+    let days = now.getDate() - releaseDate.getDate();
+    
+    if (days < 0) {
+        months--;
+        const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        days += lastMonth.getDate();
+    }
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+    
+    const parts = [];
+    if (years > 0) parts.push(`${years} ${years === 1 ? 'year' : 'years'}`);
+    if (months > 0) parts.push(`${months} ${months === 1 ? 'month' : 'months'}`);
+    if (days > 0) parts.push(`${days} ${days === 1 ? 'day' : 'days'}`);
+    
+    if (parts.length === 0) return 'less than a day';
+    if (parts.length === 1) return parts[0];
+    if (parts.length === 2) return `${parts[0]} and ${parts[1]}`;
+    return `${parts.slice(0, -1).join(', ')} and ${parts.slice(-1)}`;
+}
+
+function updateFooterDynamic() {
+    const now = new Date();
+    const elapsed = formatElapsedTime(now, APP_CONFIG.releaseDate);
+    const version = `${APP_CONFIG.major}.${APP_CONFIG.minor}.${APP_CONFIG.patch}`;
+    
+    const footerText = `© ${now.getFullYear()} ${APP_CONFIG.name} v${version} (Working from ${elapsed})`;
+    
+    const footerElement = document.getElementById('footer-text');
+    if (footerElement) footerElement.innerText = footerText;
+}
+
+// Load footer when page loads
+updateFooterDynamic();
